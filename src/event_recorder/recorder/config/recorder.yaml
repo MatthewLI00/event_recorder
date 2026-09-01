@@ -1,0 +1,49 @@
+event_recorder:
+  ros__parameters:
+    output_directory: history
+    # Humble approximates this through max_cache_size; see README sizing rule.
+    pre_trigger_seconds: 15.0
+    post_trigger_seconds: 10.0
+    # Set to 0 for continuous readiness after each completed snapshot.
+    cooldown_seconds: 0.0
+    extend_post_window_on_retrigger: true
+
+    recorder:
+      # Snapshot cache limit, in bytes. rosbag2 may need up to 2x this value.
+      max_cache_size: 5368709120 # 5 GiB
+      # Empty bag_name uses bag_prefix + YYYYMMDD_HHMMSS.  Existing names get
+      # a _1, _2... suffix, so a quick stop/start never exits on a collision.
+      bag_name: ""
+      bag_prefix: ""
+      # Same semantics as ros2 bag record: 0 disables bag-file splitting.
+      max_bagfile_size: 0
+      max_bagfile_duration: 0.0
+      record_all: false
+      disable_discovery: false
+      # Warn when recorder RSS reaches this fraction of max_cache_size.
+      cache_warning_ratio: 0.8
+      storage_id: sqlite3
+      all_topics: false
+      use_sim_time: false
+      qos_overrides_path: ""
+      topics:
+        - /your/topics
+
+    triggers:
+      pose_stale:
+        enabled: true
+        topic: /odom
+        message_timeout_seconds: 3.0
+        stationary_timeout_seconds: 10.0
+        position_epsilon_m: 0.03
+        yaw_epsilon_rad: 0.03
+        require_motion_command: true
+        cmd_vel_topic: /cmd_vel
+        linear_cmd_threshold: 0.05
+        angular_cmd_threshold: 0.05
+        cmd_timeout_seconds: 1.0
+
+keyboard_trigger:
+  ros__parameters:
+    key: r
+    trigger_service: /event_recorder/trigger

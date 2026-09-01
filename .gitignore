@@ -1,0 +1,9 @@
+build/
+install/
+log/
+history/
+keyboard_history/
+*.db3
+*.mcap
+__pycache__/
+*.pyc
